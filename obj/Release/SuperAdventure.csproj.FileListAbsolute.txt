@@ -1,0 +1,11 @@
+E:\CSharp\SuperAdventure\SuperAdventure\bin\Release\SuperAdventure.exe.config
+E:\CSharp\SuperAdventure\SuperAdventure\bin\Release\SuperAdventure.exe
+E:\CSharp\SuperAdventure\SuperAdventure\bin\Release\SuperAdventure.pdb
+E:\CSharp\SuperAdventure\SuperAdventure\bin\Release\Engine.dll
+E:\CSharp\SuperAdventure\SuperAdventure\bin\Release\Engine.pdb
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.csprojResolveAssemblyReference.cache
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.Properties.Resources.resources
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.SuperAdventure.resources
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.csproj.GenerateResource.Cache
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.exe
+E:\CSharp\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.pdb
