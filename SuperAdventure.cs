@@ -30,11 +30,68 @@ namespace SuperAdventure
             {
                 _player = Player.CreateDefaultPlayer();
             }            
-            
-            MoveTo(_player.CurrentLocation);            
+                       
+            lblHitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints");
+            lblGold.DataBindings.Add("Text", _player, "Gold");
+            lblExperience.DataBindings.Add("Text", _player, "ExperiencePoints");
+            lblLevel.DataBindings.Add("Text", _player, "Level");
 
-            UpdatePlayerStats();
+            dgvInventory.RowHeadersVisible = false;
+            dgvInventory.AutoGenerateColumns = false;
 
+            dgvInventory.DataSource = _player.Inventory;
+
+            dgvInventory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Name",
+                Width = 197,
+                DataPropertyName = "Description"
+
+            });
+
+            dgvInventory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Quantity",
+                DataPropertyName = "Quantity"
+            });
+
+            dgvQuests.RowHeadersVisible = false;
+            dgvQuests.AutoGenerateColumns = false;
+
+            dgvQuests.DataSource = _player.Quests;
+
+            dgvQuests.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Name",
+                Width = 197,
+                DataPropertyName = "Name"
+            });
+
+            dgvQuests.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Done?",
+                DataPropertyName = "IsCompleted"
+            });
+
+            cboWeapons.DataSource = _player.Weapons;
+
+            cboWeapons.DisplayMember = "Name";
+            cboWeapons.ValueMember = "Id";
+
+            if(_player.CurrentWeapon != null)
+            {
+                cboWeapons.SelectedItem = _player.CurrentWeapon;
+            }
+
+            cboWeapons.SelectedIndexChanged += cboWeapons_SelectedIndexChanged;
+
+            cboPotions.DataSource = _player.Potions;
+            cboPotions.DisplayMember = "Name";
+            cboPotions.ValueMember = "Id";
+
+            _player.PropertyChanged += PlayerOnPropertyChanged;
+
+            MoveTo(_player.CurrentLocation);
 
         }
 
@@ -81,9 +138,7 @@ namespace SuperAdventure
             rtbLocation.Text += newLocation.Description + Environment.NewLine;
 
             _player.CurrentHitPoints = _player.MaximumHitPoints;
-
-            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
-
+                        
             if(newLocation.QuestAvailableHere!=null)
             {
                 bool playerAlreadyHasQuest = _player.HasThisQuest(newLocation.QuestAvailableHere);
@@ -110,7 +165,7 @@ namespace SuperAdventure
                             rtbMessages.SelectionStart = rtbMessages.Text.Length;
                             rtbMessages.ScrollToCaret();
 
-                            _player.ExperiencePoints += newLocation.QuestAvailableHere.RewardExperiencePoints;
+                            _player.AddExperiencePoints(newLocation.QuestAvailableHere.RewardExperiencePoints);
                             _player.Gold += newLocation.QuestAvailableHere.RewardGold;
 
                             _player.AddItemToInventory(newLocation.QuestAvailableHere.RewardItem);
@@ -162,9 +217,15 @@ namespace SuperAdventure
                 }
 
                 cboWeapons.Visible = true;
-                cboPotions.Visible = true;
+                if (_player.Potions.Count > 0)
+                {
+                    cboPotions.Visible = true;
+                }
                 btnUseWeapon.Visible = true;
-                btnUsePotion.Visible = true;
+                if (_player.Potions.Count > 0)
+                {
+                    btnUsePotion.Visible = true;
+                }
             }
             else
             {
@@ -175,120 +236,10 @@ namespace SuperAdventure
                 btnUseWeapon.Visible = false;
                 btnUsePotion.Visible = false;                   
                    
-            }
-
-            UpdatePlayerStats();
-            UpdateInventoryListInUI();
-            UpdateQuestListInUI();
-            UpdateWeaponListInUI();
-            UpdatePotionListInUI();      
+            }            
                                                      
         }
-
-        private void UpdatePlayerStats()
-        {
-            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
-            lblGold.Text = _player.Gold.ToString();
-            lblExperience.Text = _player.ExperiencePoints.ToString();
-            lblLevel.Text = _player.Level.ToString();
-        }
-
-        private void UpdateInventoryListInUI()
-        {
-            dgvInventory.RowHeadersVisible = false;
-
-            dgvInventory.ColumnCount = 2;
-            dgvInventory.Columns[0].Name = "Name";
-            dgvInventory.Columns[0].Width = 197;
-            dgvInventory.Columns[1].Name = "Quantity";
-
-            dgvInventory.Rows.Clear();
-
-            foreach (InventoryItem inventoryItem in _player.Inventory)
-            {
-                if (inventoryItem.Quantity > 0)
-                {
-                    dgvInventory.Rows.Add(new[] { inventoryItem.Details.Name, inventoryItem.Quantity.ToString() });
-                }
-            }
-        }
-
-        private void UpdateQuestListInUI()
-        {
-            dgvQuests.RowHeadersVisible = false;
-
-            dgvQuests.ColumnCount = 2;
-            dgvQuests.Columns[0].Name = "Name";
-            dgvQuests.Columns[0].Width = 197;
-            dgvQuests.Columns[1].Name = "Done?";
-
-            dgvQuests.Rows.Clear();
-
-            foreach (PlayerQuest playerQuest in _player.Quests)
-            {
-                dgvQuests.Rows.Add(new[] { playerQuest.Details.Name, playerQuest.IsCompleted.ToString() });
-            }
-        }
-
-        private void UpdateWeaponListInUI()
-        {
-            List<Weapon> weapons = new List<Weapon>();
-            foreach (InventoryItem inventoryItem in _player.Inventory)
-            {
-                if (inventoryItem.Details is Weapon)
-                {
-                    if (inventoryItem.Quantity > 0)
-                    {
-                        weapons.Add((Weapon)inventoryItem.Details);
-                    }
-                }
-            }
-
-            if (weapons.Count == 0)
-            {
-                cboWeapons.Visible = false;
-                btnUseWeapon.Visible = false;
-            }
-            else
-            {
-                cboWeapons.DataSource = weapons;
-                cboWeapons.DisplayMember = "Name";
-                cboWeapons.ValueMember = "ID";
-
-                cboWeapons.SelectedIndex = 0;
-            }
-        }
-
-        private void UpdatePotionListInUI()
-        {
-            List<HealingPotion> healingPotions = new List<HealingPotion>();
-
-            foreach (InventoryItem inventoryItem in _player.Inventory)
-            {
-                if (inventoryItem.Details is HealingPotion)
-                {
-                    if (inventoryItem.Quantity > 0)
-                    {
-                        healingPotions.Add((HealingPotion)inventoryItem.Details);
-                    }
-                }
-            }
-
-            if (healingPotions.Count == 0)
-            {
-                cboPotions.Visible = false;
-                btnUsePotion.Visible = false;
-            }
-            else
-            {
-                cboPotions.DataSource = healingPotions;
-                cboPotions.DisplayMember = "Name";
-                cboPotions.ValueMember = "ID";
-
-                cboPotions.SelectedIndex = 0;
-            }
-        }
-
+     
         private void btnUseWeapon_Click_1(object sender, EventArgs e)
         {
             Weapon currentWeapon = (Weapon)cboWeapons.SelectedItem;
@@ -306,7 +257,7 @@ namespace SuperAdventure
                 rtbMessages.Text += Environment.NewLine;
                 rtbMessages.Text += "You defeated the " + _currentMonster.Name + ".";
 
-                _player.ExperiencePoints += _currentMonster.RewardExperiencePoints;
+                _player.AddExperiencePoints(_currentMonster.RewardExperiencePoints);
                 rtbMessages.Text += "You receive " + _currentMonster.RewardExperiencePoints.ToString() + " experience points." + Environment.NewLine;
 
                 _player.Gold += _currentMonster.RewardGold;
@@ -330,7 +281,7 @@ namespace SuperAdventure
                     {
                         if (lootItem.IsDefaultItem)
                         {
-                            lootedItems.Add(new InventoryItem(lootItem.Details, 1));
+                            lootedItems.Add(new InventoryItem(lootItem.Details, 1));                            
                         }
                     }
                 }
@@ -338,6 +289,7 @@ namespace SuperAdventure
                 foreach (InventoryItem inventoryItem in lootedItems)
                 {
                     _player.AddItemToInventory(inventoryItem.Details);
+                    _player.RaiseInventoryChangedEvent(inventoryItem.Details);
 
                     if (inventoryItem.Quantity == 1)
                     {
@@ -352,13 +304,7 @@ namespace SuperAdventure
                         rtbMessages.ScrollToCaret();
                     }
                 }
-
-                UpdatePlayerStats();
-
-                UpdateInventoryListInUI();
-                UpdateWeaponListInUI();
-                UpdatePotionListInUI();
-
+                
                 rtbMessages.Text += Environment.NewLine;
 
                 MoveTo(_player.CurrentLocation);
@@ -371,9 +317,7 @@ namespace SuperAdventure
                 rtbMessages.ScrollToCaret();
 
                 _player.CurrentHitPoints -= damageToPlayer;
-
-                lblHitPoints.Text = _player.CurrentHitPoints.ToString();
-
+                             
                 if (_player.CurrentHitPoints <= 0)
                 {
                     rtbMessages.Text += "The " + _currentMonster.Name + " killed you." + Environment.NewLine;
@@ -395,14 +339,8 @@ namespace SuperAdventure
                 _player.CurrentHitPoints = _player.MaximumHitPoints;
             }
 
-            foreach (InventoryItem ii in _player.Inventory)
-            {
-                if (ii.Details.ID == potion.ID)
-                {
-                    ii.Quantity--;
-                    break;
-                }
-            }
+            _player.RemoveItemFromInventory(potion,1);
+            _player.RaiseInventoryChangedEvent(potion);
 
             rtbMessages.Text += "You drink a " + potion.Name + Environment.NewLine;
 
@@ -420,16 +358,42 @@ namespace SuperAdventure
                 MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
                 rtbMessages.SelectionStart = rtbMessages.Text.Length;
                 rtbMessages.ScrollToCaret();
-            }
-
-            UpdatePlayerStats();
-            UpdateInventoryListInUI();
-            UpdatePotionListInUI();
+            }            
         }
 
         private void SuperAdventure_FormClosing(object sender, FormClosingEventArgs e)
         {
             File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
+        }
+
+        private void cboWeapons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem;
+        }
+
+        private void PlayerOnPropertyChanged(object sender,PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if(propertyChangedEventArgs.PropertyName == "Weapons")
+            {
+                cboWeapons.DataSource = _player.Weapons;
+
+                if(!_player.Weapons.Any())
+                {
+                    cboWeapons.Visible = false;
+                    btnUseWeapon.Visible = false;
+                }
+            }
+
+            if(propertyChangedEventArgs.PropertyName=="Potions")
+            {
+                cboPotions.DataSource = _player.Potions;
+
+                if(!_player.Potions.Any())
+                {
+                    cboPotions.Visible = false;
+                    btnUsePotion.Visible = false;
+                }
+            }
         }
     }
 }
