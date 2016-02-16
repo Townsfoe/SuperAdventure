@@ -216,16 +216,10 @@ namespace SuperAdventure
                     _currentMonster.LootTable.Add(lootItem);
                 }
 
-                cboWeapons.Visible = true;
-                if (_player.Potions.Count > 0)
-                {
-                    cboPotions.Visible = true;
-                }
-                btnUseWeapon.Visible = true;
-                if (_player.Potions.Count > 0)
-                {
-                    btnUsePotion.Visible = true;
-                }
+                cboWeapons.Visible = _player.Weapons.Any();
+                cboPotions.Visible = _player.Potions.Any();
+                btnUseWeapon.Visible = _player.Weapons.Any();
+                btnUsePotion.Visible = _player.Potions.Any();
             }
             else
             {
@@ -288,8 +282,10 @@ namespace SuperAdventure
 
                 foreach (InventoryItem inventoryItem in lootedItems)
                 {
+                    Object lastWeapon = cboWeapons.SelectedItem;
                     _player.AddItemToInventory(inventoryItem.Details);
                     _player.RaiseInventoryChangedEvent(inventoryItem.Details);
+                    cboWeapons.SelectedItem = lastWeapon;
 
                     if (inventoryItem.Quantity == 1)
                     {
@@ -325,6 +321,7 @@ namespace SuperAdventure
                     rtbMessages.ScrollToCaret();
                     MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
                 }
+                
             }
         }
 

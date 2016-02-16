@@ -9,3 +9,14 @@ E:\CSharp\SuperAdventure\SuperAdventure\obj\Debug\SuperAdventure.csproj.Generate
 E:\CSharp\SuperAdventure\SuperAdventure\obj\Debug\SuperAdventure.exe
 E:\CSharp\SuperAdventure\SuperAdventure\obj\Debug\SuperAdventure.pdb
 E:\CSharp\SuperAdventure\SuperAdventure\obj\Debug\SuperAdventure.SuperAdventure.resources
+C:\Users\Jacob\Documents\C#\SuperAdventure\bin\Debug\SuperAdventure.exe.config
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.exe
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.pdb
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.csprojResolveAssemblyReference.cache
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.Properties.Resources.resources
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.SuperAdventure.resources
+C:\Users\Jacob\Documents\C#\SuperAdventure\obj\Debug\SuperAdventure.csproj.GenerateResource.Cache
+C:\Users\Jacob\Documents\C#\SuperAdventure\bin\Debug\SuperAdventure.exe
+C:\Users\Jacob\Documents\C#\SuperAdventure\bin\Debug\SuperAdventure.pdb
+C:\Users\Jacob\Documents\C#\SuperAdventure\bin\Debug\Engine.dll
+C:\Users\Jacob\Documents\C#\SuperAdventure\bin\Debug\Engine.pdb
